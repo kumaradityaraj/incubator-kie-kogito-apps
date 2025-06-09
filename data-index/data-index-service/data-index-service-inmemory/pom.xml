@@ -147,6 +147,58 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+        <execution>
+          <id>download-ui-files</id>
+          <phase>generate-resources</phase>
+          <goals>
+            <goal>exec</goal>
+          </goals>
+          <configuration>
+            <executable>sh</executable>
+            <workingDirectory>${project.build.directory}</workingDirectory>
+            <arguments>
+              <argument>-c</argument>
+              <argument>
+                mkdir -p "${basedir}/src/main/resources/META-INF/resources" &amp;&amp;
+                mkdir -p ui &amp;&amp;
+                curl -s -o ui/index.html https://raw.githubusercontent.com/apache/incubator-kie-tools/main/packages/data-index-webapp/src/index.html &amp;&amp;
+                curl -s -o ${basedir}/src/main/resources/META-INF/resources/styles.css https://raw.githubusercontent.com/apache/incubator-kie-tools/main/packages/data-index-webapp/src/styles.css &amp;&amp;
+                curl -s -o ${basedir}/src/main/resources/META-INF/resources/favicon.svg https://raw.githubusercontent.com/apache/incubator-kie-tools/refs/heads/main/packages/data-index-webapp/static/favicon.svg
+              </argument>
+            </arguments>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>3.3.1</version>
+      <executions>
+        <execution>
+          <id>copy-to-meta-inf</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>
+            <outputDirectory>${basedir}/src/main/resources/META-INF/resources/ui</outputDirectory>
+            <resources>
+              <resource>
+                <directory>${project.build.directory}/ui</directory>
+                <includes>
+                  <include>**/*</include>
+                </includes>
+              </resource>
+            </resources>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
     </plugins>
   </build>
 
